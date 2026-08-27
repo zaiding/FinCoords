@@ -19,5 +19,5 @@ icon=icon.png
 experimental=False
 deprecated=False
 server=False
-license=GNU GPLv3
+license=GPLv3
 licensefile=LICENSE
