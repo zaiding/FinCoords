@@ -30,7 +30,7 @@ class CoordPickerDialog(QDialog):
     def __init__(self, iface, parent=None):
         super().__init__(parent, Qt.Tool)
         self.iface = iface
-        self.setWindowTitle("Coordonnées (EPSG:4326)")
+        self.setWindowTitle("Fin Coordinates (EPSG:4326)")
         self.setMinimumWidth(320)
 
         self.lat_edit = QLineEdit()
@@ -38,24 +38,24 @@ class CoordPickerDialog(QDialog):
         for e in (self.lat_edit, self.lon_edit):
             e.setReadOnly(True)
 
-        self.status_label = QLabel("Sélectionne un point sur la couche active.")
+        self.status_label = QLabel("Select a point on the active layer.")
         self.status_label.setWordWrap(True)
 
         lat_row = QHBoxLayout()
         lat_row.addWidget(QLabel("Latitude :"))
         lat_row.addWidget(self.lat_edit)
-        btn_lat = QPushButton("Copier")
+        btn_lat = QPushButton("Copy")
         btn_lat.clicked.connect(lambda: self.copy_text(self.lat_edit.text()))
         lat_row.addWidget(btn_lat)
 
         lon_row = QHBoxLayout()
         lon_row.addWidget(QLabel("Longitude :"))
         lon_row.addWidget(self.lon_edit)
-        btn_lon = QPushButton("Copier")
+        btn_lon = QPushButton("Copy")
         btn_lon.clicked.connect(lambda: self.copy_text(self.lon_edit.text()))
         lon_row.addWidget(btn_lon)
 
-        btn_both = QPushButton("Copier Latitude, Longitude")
+        btn_both = QPushButton("Copy Latitude, Longitude")
         btn_both.clicked.connect(self.copy_both)
 
         layout = QVBoxLayout()
@@ -92,7 +92,7 @@ class CoordPickerDialog(QDialog):
             self._connected_layer = layer
             self.update_coords()
         else:
-            self.status_label.setText("La couche active n'est pas une couche de points.")
+            self.status_label.setText("The active layer is not a vector point layer")
             self.lat_edit.clear()
             self.lon_edit.clear()
 
@@ -103,7 +103,7 @@ class CoordPickerDialog(QDialog):
 
         selected = layer.selectedFeatures()
         if not selected:
-            self.status_label.setText("Aucune entité sélectionnée.")
+            self.status_label.setText("No feature is selected")
             self.lat_edit.clear()
             self.lon_edit.clear()
             return
@@ -114,7 +114,7 @@ class CoordPickerDialog(QDialog):
 
         geom = selected[0].geometry()
         if geom is None or geom.isEmpty():
-            self.status_label.setText("Géométrie vide.")
+            self.status_label.setText("Empty geometry.")
             return
 
         if QgsWkbTypes.isMultiType(geom.wkbType()):
@@ -130,7 +130,7 @@ class CoordPickerDialog(QDialog):
 
         extra = ""
         if len(selected) > 1:
-            extra = f" ({len(selected)} entités sélectionnées, la 1ère est affichée)"
+            extra = f" ({len(selected)} selected features, la 1ère est affichée)"
         self.status_label.setText(f"Point sélectionné{extra}.")
 
     def closeEvent(self, event):
