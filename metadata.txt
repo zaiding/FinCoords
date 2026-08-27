@@ -8,9 +8,9 @@ email=abdelghani.zaid@suez.com
 
 about=Selects a point on a vector point layer and instantly displays its coordinates in EPSG:4326 (latitude/longitude) in a small window, with buttons to copy each value to the clipboard. Developped to be used in GEMS to add manholes.
 
-tracker=https://github.com/tonpseudo/FinCoords/issues
-repository=https://github.com/tonpseudo/FinCoords
-homepage=https://github.com/tonpseudo/FinCoords
+tracker=https://github.com/zaiding/FinCoords/issues
+repository=https://github.com/zaiding/FinCoords
+homepage=https://github.com/zaiding/FinCoords
 
 category=Vector
 tags=coordinates,latitude,longitude,wgs84,epsg4326,clipboard,copy
