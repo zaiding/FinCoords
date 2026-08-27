@@ -38,7 +38,7 @@ class CoordPickerDialog(QDialog):
         for e in (self.lat_edit, self.lon_edit):
             e.setReadOnly(True)
 
-        self.status_label = QLabel("Select a point on the active layer.")
+        self.status_label = QLabel("Select a point on the active layer")
         self.status_label.setWordWrap(True)
 
         lat_row = QHBoxLayout()
@@ -114,7 +114,7 @@ class CoordPickerDialog(QDialog):
 
         geom = selected[0].geometry()
         if geom is None or geom.isEmpty():
-            self.status_label.setText("Empty geometry.")
+            self.status_label.setText("Empty geometry")
             return
 
         if QgsWkbTypes.isMultiType(geom.wkbType()):
@@ -131,7 +131,7 @@ class CoordPickerDialog(QDialog):
         extra = ""
         if len(selected) > 1:
             extra = f" ({len(selected)} selected features, only 1st is shown)"
-        self.status_label.setText(f"Selected point{extra}.")
+        self.status_label.setText(f"Selected point{extra}")
 
     def closeEvent(self, event):
         # Se déconnecte proprement à la fermeture pour éviter les erreurs
