@@ -1,0 +1,21 @@
+[general]
+name=FinCoords
+qgisMinimumVersion=3.0
+description=Displays the latitude/longitude (EPSG:4326) of the selected point, with copy buttons. Developped to be used in GEMS
+version=1.0
+author=Abdelghani Zaid
+email=abdelghani.zaid@suez.com
+
+about=Selects a point on a vector point layer and instantly displays its coordinates in EPSG:4326 (latitude/longitude) in a small window, with buttons to copy each value to the clipboard. Developped to be used in GEMS to add manholes.
+
+tracker=https://github.com/tonpseudo/FinCoords/issues
+repository=https://github.com/tonpseudo/FinCoords
+homepage=https://github.com/tonpseudo/FinCoords
+
+category=Vector
+tags=coordinates,latitude,longitude,wgs84,epsg4326,clipboard,copy
+
+icon=icon.png
+experimental=False
+deprecated=False
+server=False
