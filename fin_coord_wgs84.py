@@ -131,7 +131,7 @@ class CoordPickerDialog(QDialog):
         extra = ""
         if len(selected) > 1:
             extra = f" ({len(selected)} selected features, only 1st is shown)"
-        self.status_label.setText(f"Point sélectionné{extra}.")
+        self.status_label.setText(f"Selected point{extra}.")
 
     def closeEvent(self, event):
         # Se déconnecte proprement à la fermeture pour éviter les erreurs
