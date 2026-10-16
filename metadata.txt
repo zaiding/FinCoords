@@ -2,7 +2,7 @@
 name=FinCoords
 qgisMinimumVersion=3.0
 description=Displays the latitude/longitude (EPSG:4326) of the selected point, with copy buttons. Developped to be used in GEMS
-version=1.0
+version=1.1
 author=Abdelghani Zaid
 email=abdelghani.zaid@suez.com
 
