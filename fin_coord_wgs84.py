@@ -3,29 +3,6 @@
 -------------------
 Selects a point on a vector point layer and instantly displays its coordinates in EPSG:4326 (latitude/longitude) in a small window, with buttons to copy each value to the clipboard. Developped to be used in GEMS to add manholes.
 """
-
-import os
-
-from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import (
-    QAction,
-    QApplication,
-    QDialog,
-    QHBoxLayout,
-    QLabel,
-    QLineEdit,
-    QPushButton,
-    QVBoxLayout,
-)
-from qgis.core import (
-    QgsCoordinateReferenceSystem,
-    QgsCoordinateTransform,
-    QgsProject,
-    QgsWkbTypes,
-)
-
-
 class CoordPickerDialog(QDialog):
     def __init__(self, iface, parent=None):
         super().__init__(parent, Qt.Tool)
@@ -66,8 +43,33 @@ class CoordPickerDialog(QDialog):
         self.setLayout(layout)
 
         self._connected_layer = None
-        self.iface.currentLayerChanged.connect(self.on_layer_changed)
+        self._signals_connected = False
+        # Plus de connexion ici : elle est faite dans showEvent
+
+    def showEvent(self, event):
+        # Reconnecte les signaux à chaque affichage de la fenêtre
+        if not self._signals_connected:
+            self.iface.currentLayerChanged.connect(self.on_layer_changed)
+            self._signals_connected = True
         self.on_layer_changed(self.iface.activeLayer())
+        super().showEvent(event)
+
+    def _disconnect_layer(self):
+        if self._connected_layer is not None:
+            try:
+                self._connected_layer.selectionChanged.disconnect(self.update_coords)
+            except (TypeError, RuntimeError):
+                pass
+            self._connected_layer = None
+
+    def _disconnect_signals(self):
+        self._disconnect_layer()
+        if self._signals_connected:
+            try:
+                self.iface.currentLayerChanged.disconnect(self.on_layer_changed)
+            except (TypeError, RuntimeError):
+                pass
+            self._signals_connected = False
 
     def copy_text(self, text):
         QApplication.clipboard().setText(text)
@@ -76,12 +78,7 @@ class CoordPickerDialog(QDialog):
         self.copy_text(f"{self.lat_edit.text()}, {self.lon_edit.text()}")
 
     def on_layer_changed(self, layer):
-        if self._connected_layer is not None:
-            try:
-                self._connected_layer.selectionChanged.disconnect(self.update_coords)
-            except (TypeError, RuntimeError):
-                pass
-            self._connected_layer = None
+        self._disconnect_layer()
 
         if (
             layer is not None
@@ -134,49 +131,5 @@ class CoordPickerDialog(QDialog):
         self.status_label.setText(f"Selected point{extra}")
 
     def closeEvent(self, event):
-        # Se déconnecte proprement à la fermeture pour éviter les erreurs
-        if self._connected_layer is not None:
-            try:
-                self._connected_layer.selectionChanged.disconnect(self.update_coords)
-            except (TypeError, RuntimeError):
-                pass
-        try:
-            self.iface.currentLayerChanged.disconnect(self.on_layer_changed)
-        except (TypeError, RuntimeError):
-            pass
+        self._disconnect_signals()
         event.accept()
-
-
-class FinCoordsWGS84:
-    """Classe principale du plugin, gère l'intégration dans l'interface QGIS."""
-
-    def __init__(self, iface):
-        self.iface = iface
-        self.plugin_dir = os.path.dirname(__file__)
-        self.action = None
-        self.dialog = None
-
-    def initGui(self):
-        icon_path = os.path.join(self.plugin_dir, "icon.png")
-        self.action = QAction(QIcon(icon_path), "FinCoords WGS84", self.iface.mainWindow())
-        self.action.triggered.connect(self.run)
-        self.action.setCheckable(False)
-
-        # Ajoute un bouton dans la barre d'outils et une entrée dans le menu Extensions
-        self.iface.addToolBarIcon(self.action)
-        self.iface.addPluginToMenu("&FinCoords WGS84", self.action)
-
-    def unload(self):
-        self.iface.removePluginMenu("&FinCoords WGS84", self.action)
-        self.iface.removeToolBarIcon(self.action)
-        if self.dialog is not None:
-            self.dialog.close()
-            self.dialog = None
-
-    def run(self):
-        # Réutilise la fenêtre si elle existe déjà plutôt que d'en ouvrir plusieurs
-        if self.dialog is None:
-            self.dialog = CoordPickerDialog(self.iface, self.iface.mainWindow())
-        self.dialog.show()
-        self.dialog.raise_()
-        self.dialog.activateWindow()
